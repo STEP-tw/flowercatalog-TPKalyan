@@ -1,141 +1,90 @@
 const http = require('http');
 const fs = require('fs');
-const querystring = require('querystring');
 const Comments = require('./js/Comments.js');
-const port = 8000;
-let comments = new Comments("./database/data.json");
+const webApp = require("./webapp.js");
+const port = process.argv[process.argv.length - 1] || 8000;
+let app = webApp.create();
+const comments = new Comments("./database/data.json");
 
-let contentType = {
+const contentType = {
   "html" : "text/html",
   "txt" : "text/plain",
   "css" : "text/css",
   "js" : "text/javascript",
   "jpg" : "image/jpg",
   "ico" : "image/jpg",
-  "gif" : "image/gif"
+  "gif" : "image/gif",
+  "pdf" : "application/pdf"
 };
 
-let folder = {
-  "js" : "/js",
-  "html" : "/public",
-  "htm" : "/public",
-  "css" : "/styles",
-  "jpg" : "/pictures",
-  "gif" : "/pictures",
-  "ico" : "/pictures"
+const getExtension = (filePath)=>{
+  return filePath.substr(filePath.lastIndexOf('.')+1);
 }
 
-let specialPages = ["/public/submit","/public/guest"];
-
-let isSpecial = function(pageName){
-  return specialPages.includes(pageName);
-}
-
-let createRow = function(comment){
-  let row = "<tr>";
-  for (var key in comment) {
-    row += "<td>"+comment[key]+"</td>";
-  }
-  return row+"</tr>"
-}
-
-let getRows = function(){
-  return comments.map(createRow).join("\n");
-}
-
-let extractUserEnteredData = function(fileLocation){
-  let enteredDetails = fileLocation.split('?')[1];
-  return querystring.parse(enteredDetails);
-}
-
-let addComment = function(parsedComment){
-  comments.addComment(parsedComment);
-}
-
-let getExtension = function(fileName){
-  let startIndex = fileName.lastIndexOf('.')+1;
-  return fileName.substr(startIndex,4);
-}
-
-let insertRows = function(fileName,rows){
-  try {
-    let file = fs.readFileSync(fileName);
-    let startingPart = file.slice(0,file.indexOf('</table>'));
-    let endingPart = file.slice(file.indexOf('</table>'));
-    return startingPart +rows+ endingPart;
-  } catch (e) {
-    console.log(fileName+" not found");
-  }
-}
-
-let getFileInfo = function(fileLocation){
-  let fileInfo = {};
-  let date = new Date();
-  let currentTime = date.toLocaleTimeString();
-  let currentDate = date.toLocaleDateString();
-  try {
-    fileInfo.logFile = "./logs/log.txt";
-    fileInfo.message = `Requested for ${fileLocation} on ${currentDate} at ${currentTime}`;
-    fileInfo.fileContent = fs.readFileSync('.'+fileLocation);
-    fileInfo.contentType = contentType[getExtension(fileLocation)]
-    fileInfo.statusCode = 200;
-  } catch (e){
-    fileInfo.logFile = "./logs/errors.txt";
-    fileInfo.message = `${fileLocation} is not found. Requested on ${currentDate} at ${currentTime}`;
-    fileInfo.fileContent = fs.readFileSync('./public/fileNotFound.html');
-    fileInfo.contentType = contentType["html"];
-    fileInfo.statusCode = 404;
-  }
-  return fileInfo;
-}
-
-let logIntoFile = function(logFile,logMessage){
-  fs.appendFileSync(logFile,logMessage+"\n");
-}
-
-let handleSubmitRequest = function(req,res,fileLocation){
-  let parsedComment = extractUserEnteredData(fileLocation);
-  addComment(parsedComment);
-  res.writeHead(302,{"Location":"/guest.html"});
+const returnFileContent = function(req,res,filePath){
+  res.setHeader("Content-Type",contentType[getExtension(filePath)]);
+  res.statusCode = 200;
+  res.write(fs.readFileSync(filePath));
   res.end();
 }
 
-let handleGuestRequest = function(req,res){
-  let guestPageWithComments = insertRows("./public/guest.html",getRows());
-  res.write(guestPageWithComments);
-  res.end();
-}
+app.get("/",(req,res)=>{
+  returnFileContent(req,res,"./public/index.html");
+});
 
-let handleFileRequest = function(req,res,fileLocation){
-  fileInfo = getFileInfo(fileLocation);
-  logIntoFile(fileInfo.logFile,fileInfo.message);
-  res.setHeader("Content-Type",fileInfo.contentType);
-  res.statusCode = fileInfo.statusCode;
-  res.write(fileInfo.fileContent);
-  res.end();
-}
+app.get("/index.html",(req,res)=>{
+  returnFileContent(req,res,"./public/index.html");
+});
 
-let requestHandlers = {
-  "/public/submit" : handleSubmitRequest,
-  "/public/guest" : handleGuestRequest,
-  "normal" : handleFileRequest
-}
+app.get("/Abeliophyllum.html",(req,res)=>{
+  returnFileContent(req,res,"./public/Abeliophyllum.html");
+});
 
-let handleRequest = function(req,res){
-  let date = new Date();
-  let currentTime = date.toLocaleTimeString();
-  let currentDate = date.toLocaleDateString();
-  let url = (req.url == "/") ? "/index.html" : req.url;
-  let fileLocation = folder[getExtension(url)] + url;
-  console.log(`Requested for ${fileLocation} on ${currentDate} at ${currentTime}`);
-  console.log(`Method : ${req.method}`);
-  console.log("-------------------------------------------------");
-  let pageName = fileLocation.substr(0,fileLocation.indexOf("."));
-  pageName = isSpecial(pageName) ? pageName : "normal";
-  requestHandlers[pageName](req,res,fileLocation);
-}
+app.get("/Ageratum.html",(req,res)=>{
+  returnFileContent(req,res,"./public/ageratum.html");
+});
 
-let server = http.createServer(handleRequest);
+app.get("/guest.html",(req,res)=>{
+  returnFileContent(req,res,"public/guest.html");
+})
+
+app.get("/style.css",(req,res)=>{
+  returnFileContent(req,res,"./styles/style.css")
+});
+
+app.get("/favicon.ico",(req,res)=>{
+  returnFileContent(req,res,"./pictures/favicon.ico");
+});
+
+app.get("/wateringPot.gif",(req,res)=>{
+  returnFileContent(req,res,"pictures/wateringPot.gif");
+});
+
+app.get("/freshorigins.jpg",(req,res)=>{
+  returnFileContent(req,res,"./pictures/freshorigins.jpg");
+});
+
+app.get("/pbase-Abeliophyllum.jpg",(req,res)=>{
+  returnFileContent(req,res,"./pictures/pbase-Abeliophyllum.jpg");
+});
+
+app.get("/pbase-agerantum.jpg",(req,res)=>{
+  returnFileContent(req,res,"./pictures/pbase-agerantum.jpg");
+});
+
+app.get("/abeliophyllum.pdf",(req,res)=>{
+  returnFileContent(req,res,"./public/files/Abeliophyllum.pdf");
+});
+
+app.get("/ageratum.pdf",(req,res)=>{
+  returnFileContent(req,res,"./public/files/Ageratum.pdf");
+});
+
+app.get("/comments.js",(req,res)=>{
+  returnFileContent(req,res,"./public/comments.js");
+})
+
+const server = http.createServer(app);
 
 console.log(`Listening to ${port}`);
 
