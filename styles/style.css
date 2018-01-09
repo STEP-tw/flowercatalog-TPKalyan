@@ -1,0 +1,53 @@
+.mainTitle{
+  color: #ddb838;
+  text-align: center;
+}
+
+hr{
+  border-width: 2px;
+}
+
+.image{
+  width: 72%;
+  margin-right: 26px;
+  float: left;
+}
+
+#mainImage{
+  width : 100%;
+}
+
+.links{
+  float: left;
+  margin-left: 0px;
+  margin-top: 250px;
+}
+
+#wateringPot{
+  margin-left: 90px;
+}
+
+.flowerImage{
+  float: left;
+  margin-right: 10px;
+}
+
+.ageratum{
+  height: 700px;
+}
+
+.content{
+  margin-right: 10px;
+  margin-top: 250px;
+}
+
+table,tr,td,th {
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+
+#comments{
+  width: 90%;
+  text-align: center;
+  font-size: 1.5em;
+}

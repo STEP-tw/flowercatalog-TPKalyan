@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>index</title>
+    <link rel="stylesheet" href="/style.css">
+    <script type="text/javascript">
+      let hideImage = function(){
+        let image = document.getElementById('wateringPot');
+        image.style.visibility = 'hidden';
+        setTimeout(function () {
+          let image = document.getElementById('wateringPot');
+          image.style.visibility = 'visible';
+        }, 500);
+      }
+    </script>
+  </head>
+  <body>
+    <h1 class="mainTitle">Flower catalog</h1>
+    <hr>
+    <div class = "image">
+      <img id = "mainImage" src="/freshorigins.jpg" alt="">
+    </div>
+    <div class="links">
+      <ul>
+        <li><a href="Abeliophyllum.html">Abeliophyllum</a></li>
+        <li><a href="Ageratum.html">Agerantum</a></li>
+      </ul>
+      <img id="wateringPot" onclick="hideImage()" src="/wateringPot.gif" alt="watering pot">
+      <br>
+      <a href="guest.html">Guest</a>
+    </div>
+  </body>
+</html>
