@@ -21,6 +21,18 @@ const redirectLoggedInUserToHome = function(req,res){
   }
 }
 
+const redirectLoggedOutUserToNormalGuest = function(req,res){
+  if(req.urlIsOneOf(['/guest.html','/guest']) && !req.user){
+    res.redirect('/logedOutGuest');
+  }
+}
+
+const redirectLoggedInUserToActualGuest = function(req,res){
+  if(req.urlIsOneOf(['/guest.html','guest']) && req.user){
+    res.redirect("actualGuest");
+  }
+}
+
 const contentType = {
   "html" : "text/html",
   "txt" : "text/plain",
@@ -49,6 +61,10 @@ app.use(loadUser);
 
 app.use(redirectLoggedInUserToHome);
 
+app.use(redirectLoggedOutUserToNormalGuest);
+
+app.use(redirectLoggedInUserToActualGuest);
+
 app.get("/",(req,res)=>{
   returnFileContent(req,res,"./public/index.html");
 });
@@ -64,6 +80,14 @@ app.get("/Abeliophyllum.html",(req,res)=>{
 app.get("/Ageratum.html",(req,res)=>{
   returnFileContent(req,res,"./public/ageratum.html");
 });
+
+app.get("/actualGuest",(req,res)=>{
+  returnFileContent(req,res,'./public/actualGuest.html');
+})
+
+app.get("/logedOutGuest",(req,res)=>{
+  returnFileContent(req,res,'./public/normalGuest.html');
+})
 
 app.get("/style.css",(req,res)=>{
   returnFileContent(req,res,"./styles/style.css")
