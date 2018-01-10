@@ -4,7 +4,7 @@ let getCurrentDate = function(){
 }
 
 let getCurrentTime = function(){
-  return new Date().toLocaleTimeString()
+  return new Date().toLocaleTimeString();
 }
 
 let Comment = function(name,comment){
