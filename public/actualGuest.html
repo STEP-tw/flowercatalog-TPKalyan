@@ -5,23 +5,7 @@
     <title>guest page</title>
     <link rel="stylesheet" href="/style.css">
     <script src="/comments.js" charset="utf-8"></script>
-    <script type="text/javascript">
-      let writeComments = function(){
-        let table = document.getElementById("comments");
-        comments.forEach(function(comment){
-          let row = document.createElement('tr');
-          let keys = Object.keys(comment);
-          keys.forEach(function(key){
-            let data = document.createTextNode(comment[key]);
-            let td = document.createElement('td');
-            td.appendChild(data)
-            row.appendChild(td);
-          });
-          table.appendChild(row);
-        });
-      }
-      window.onload = writeComments;
-    </script>
+    <script src="/load.js" charset="utf-8"></script>
   </head>
   <body>
     <h1 class = "mainTitle"><a href="index.html"> << </a> Guest Book</h1>

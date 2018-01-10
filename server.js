@@ -102,6 +102,10 @@ app.post("/actualGuest",(req,res)=>{
   res.end();
 })
 
+app.get("/load.js",(req,res)=>{
+  returnFileContent(req,res,'./public/load.js')
+})
+
 app.get("/style.css",(req,res)=>{
   returnFileContent(req,res,"./styles/style.css")
 });
