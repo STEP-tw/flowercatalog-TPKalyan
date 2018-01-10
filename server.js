@@ -162,6 +162,11 @@ app.post('/login',(req,res)=>{
   res.redirect('/');
 });
 
+app.get('/getUserName',(req,res)=>{
+  res.write(req.user.name);
+  res.end();
+})
+
 const server = http.createServer(app);
 
 console.log(`Listening to ${port}`);

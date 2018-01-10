@@ -6,11 +6,24 @@
     <link rel="stylesheet" href="/style.css">
     <script src="/comments.js" charset="utf-8"></script>
     <script src="/load.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      writeName = function(){
+        let userName = this.responseText;
+        document.getElementById('userName').innerText = `Welcome ${userName}`;
+      };
+      getName = function(){
+        let userNameRequest = new XMLHttpRequest();
+        userNameRequest.onload = writeName;
+        userNameRequest.open("GET","/getUserName");
+        userNameRequest.send();
+      }
+    </script>
   </head>
-  <body>
+  <body onload="writeComments();getName();">
     <h1 class = "mainTitle"><a href="index.html"> << </a> Guest Book</h1>
     <hr>
     <form method="post">
+      <h1 id="userName" ></h1>
       Comment :<br>
       <textarea name="comment" rows="8" cols="80"></textarea><br>
       <input type="submit"/>

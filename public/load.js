@@ -12,4 +12,3 @@ let writeComments = function(){
     table.appendChild(row);
   });
 }
-window.onload = writeComments;
