@@ -16,6 +16,10 @@ Comments.prototype.addComment = function (parsedData) {
   writeIntoFile(this.filePath,this.allComments);
 };
 
+Comments.prototype.getComments = function(){
+  return this.allComments;
+};
+
 Comments.prototype.map = function (mapper) {
   return this.allComments.map(mapper);
 };

@@ -22,14 +22,14 @@ const redirectLoggedInUserToHome = function(req,res){
 }
 
 const redirectLoggedOutUserToNormalGuest = function(req,res){
-  if(req.urlIsOneOf(['/guest.html','/guest']) && !req.user){
+  if(req.urlIsOneOf(['/guest.html','/guest','/actualGuest']) && !req.user){
     res.redirect('/logedOutGuest');
   }
 }
 
 const redirectLoggedInUserToActualGuest = function(req,res){
-  if(req.urlIsOneOf(['/guest.html','guest']) && req.user){
-    res.redirect("actualGuest");
+  if(req.urlIsOneOf(['/guest.html','/guest','/logedOutGuest']) && req.user){
+    res.redirect("/actualGuest");
   }
 }
 
@@ -53,6 +53,10 @@ const returnFileContent = function(req,res,filePath){
   res.statusCode = 200;
   res.write(fs.readFileSync(filePath));
   res.end();
+}
+
+const  addComment = function(parsedComment){
+  comments.addComment(parsedComment);
 }
 
 let app = webApp.create();
@@ -81,12 +85,21 @@ app.get("/Ageratum.html",(req,res)=>{
   returnFileContent(req,res,"./public/ageratum.html");
 });
 
+app.get("/logedOutGuest",(req,res)=>{
+  returnFileContent(req,res,'./public/normalGuest.html');
+})
+
 app.get("/actualGuest",(req,res)=>{
   returnFileContent(req,res,'./public/actualGuest.html');
 })
 
-app.get("/logedOutGuest",(req,res)=>{
-  returnFileContent(req,res,'./public/normalGuest.html');
+app.post("/actualGuest",(req,res)=>{
+  req.body.comment = req.body.comment.replace(/\+/g,' ');
+  req.body.name = req.user.name;
+  addComment(req.body);
+  fs.writeFileSync('./public/comments.js',`var comments = ${JSON.stringify(comments.getComments(),null,'\t') }`);
+  res.redirect("/actualGuest");
+  res.end();
 })
 
 app.get("/style.css",(req,res)=>{
